@@ -32,6 +32,8 @@ The main problem with development of a parallel implementation of algorithms is 
 
 ### Experimental results
 
+We present preliminary experimental results used to evaluate the efficiency of the proposed parallel implementations. The experimental results give the execution times in seconds. All computations are executed on Ubuntu 18.04 operation system with 2 CPUs Intel Xeon E5-2620v4 each with 8 cores and 16 threads. The MPI implementation is compiled with mpicc wrapper compiler of GNU Compiler Collection (GCC) version 7.5.0, while the OpenMP implementation uses the standard gcc compiler (version 7.5.0). The presented execution times are for implementations that calculate the total number of codewords without saving the words themselves.
+
 ...
 
 ##### Related Publication
