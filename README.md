@@ -152,6 +152,14 @@ The MPI implementation uses a **Master–Worker** strategy, where the master pro
 
 We present preliminary experimental results used to evaluate the efficiency of the proposed parallel implementations. The experimental results give the execution times in seconds. All computations are executed on Ubuntu 18.04 operation system with 2 CPUs Intel Xeon E5-2620v4 each with 8 cores and 16 threads. The MPI implementation is compiled with mpicc wrapper compiler of GNU Compiler Collection (GCC) version 7.5.0, while the OpenMP implementation uses the standard gcc compiler (version 7.5.0). The presented execution times are for implementations that calculate the total number of codewords without saving the words themselves.
 
+Table 1 presents the execution times of the optimized sequential algorithms. The results show that the recursive algorithm performs better for smaller code lengths, while its efficiency decreases as $n$ increases due to the growing number of recursive calls. For larger lengths, the subset-generation algorithm becomes more efficient; for example, at $n=15$ the recursive version is approximately 41% slower. For smaller lengths, the performance difference between the two algorithms is below 10%.
+
+| Algorithm  |m=5, n=15|m=11, n=10|m=29, n=7|m=31, n=7| 
+|------------|---------|----------|---------|----------|
+| Recursive  |  96,64  |  69,57   |  46,58  |  73,95   | 
+| Subsets    |  68,17  |  75,03   |  47,71  |  76,29   | 
+**Table 1**. Speedup with parallel implementation of the recursive algorithm
+
 ...
 
 ##### Related Publication
