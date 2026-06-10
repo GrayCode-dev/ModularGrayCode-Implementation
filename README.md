@@ -158,9 +158,27 @@ Table 1 presents the execution times of the optimized sequential algorithms. The
 |------------|---------|----------|---------|----------|
 | Recursive  |  96,64  |  69,57   |  46,58  |  73,95   | 
 | Subsets    |  68,17  |  75,03   |  47,71  |  76,29   | 
-**Table 1**. Speedup with parallel implementation of the recursive algorithm
+**Table 1**. Execution times using sequential implementations with optimized algorithms(sec.)
 
-...
+Tables 2 and 3 present the execution times of the parallel implementations for m=5,n=15 and m=11,n=10, respectively. In both cases, increasing the number of threads/processes reduces the execution time, although the speedup becomes less pronounced at higher levels of parallelism. The MPI implementations consistently outperform the OpenMP versions, with the MPI(GC) approach achieving the best execution times across all tested configurations. For OpenMP, the task-based implementation generally performs better than or similarly to the parallel-for version, particularly for larger workloads. Overall, the results demonstrate that MPI provides the highest scalability and efficiency, while both MPI and OpenMP benefit from increased parallelism.
+
+| Algorithm    |  P=4  |  P=8  |  P=16  |  P=32  | 
+|--------------|-------|-------|--------|--------|
+| MPI(MW)      | 37,47 | 18,30 |  10,20 |  9,554 | 
+| MPI(GC)      | 18,29 | 9,640 |  6,133 |  4,597 | 
+| OpenMP(task) | 32,27 | 19,54 |  17,76 |  13,85 | 
+| OpenMP(PF)   | 32,07 | 17,35 |  14,10 |  8,789 | 
+
+**Table 2**. Execution times for $m=5$ $n=15$ $nfix=2$
+
+| Algorithm    |  P=4  |  P=8  |  P=16  |  P=32  | 
+|--------------|-------|-------|--------|--------|
+| MPI(MW)      | 24,43 | 11,54 |  6,435 |  5,540 | 
+| MPI(GC)      | 17,30 | 9,171 |  5,635 |  4,033 | 
+| OpenMP(task) | 23,43 | 12,20 |  9,863 |  6,774 | 
+| OpenMP(PF)   | 24,27 | 13,05 |  10,71 |  6,420 | 
+
+**Table 3**. Execution times for $m=11$ $n=10$ $nfix=2$}
 
 ##### Related Publication
 
