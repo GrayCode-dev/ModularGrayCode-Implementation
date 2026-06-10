@@ -81,9 +81,72 @@ void GrayOpenMP_subset(int m, int n) {
 ```
 To count the total number of generated codewords, a shared global counter can be updated inside an OpenMP $critical$ $section$. This ensures that only one thread modifies the counter at a time, preventing race conditions.
 
+The MPI implementation follows the same partitioning strategy as the OpenMP version, distributing codewords among processes. Each process independently generates its assigned subset without requiring inter-process communication and can store the results in a separate file. If the total number of generated codewords is needed, each process returns its local count, which can then be collected using MPI_Gather.
+
 ### Parallelization of recursive algorithm
 
-...
+The considered recursive algorithm generates the $m$-ary modular Gray code using recursion to emulate nested loops. Similar to the subset-generation algorithm, modulo operations are optimized with a simple **if statement**, reducing computational overhead. The parameter $k$ determines the last position to be modified during the generation process, while recursive calls control the coordinate changes. The algorithm starts from the vector $(0…01)$ with an initial value $k=1$.
+
+```cpp
+void Gray_rec(int g[],int k, int n, int m, int &br){
+   if (k <= n) {
+   	Gray_rec(g,k + 1, n, m,br);
+   	for (int i = 1; i <= m - 1; i++) {
+   	  if (g[k] == (m - 1)) g[k] = 0;
+   	  else  (g[k]++);
+   	  br++;
+   	  Gray_rec(g,k + 1, n, m,br);
+} } }
+```
+This parallelization approach fixes the first $nfix$ coordinates of the codewords and treats the generation of the remaining $n−nfix$ coordinates as independent computational tasks. Since there are $m^{nfix}$ possible combinations of fixed coordinates, the algorithm creates the same number of independent tasks that can be executed concurrently. In the OpenMP implementation, each task receives its own copy of the fixed coordinates, generates the corresponding subcode independently, and updates the total number of generated codewords through a **critical** section when finished. This task-based strategy enables efficient parallel execution on shared-memory systems.
+
+```cpp
+struct stg{int g[32];}sg;
+int taskID = 0, total = 0;
+void GrayTask(stg& sg, int k, int& nfix,
+int& n, int& m) {
+   if (k <= nfix) {
+   	GrayTask(sg, k + 1, nfix, n, m);
+   	for (int i = 1; i <= m - 1; i++) {
+   	  if (sg.g[k] == (m - 1)) sg.g[k] = 0;
+   	  else  (sg.g[k]++);
+   	  taskID++;
+# pragma omp task firstprivate(sg,taskID)
+{
+      sg.g[nfix + 1] = ((m - 1)*taskID)%m;
+      int br = 0;
+      Gray_rec(sg.g, nfix + 1,n, m, br);
+# pragma omp critical
+{total = total + br + 1; }
+}
+      GrayTask(sg, k + 1, nfix, n, m);
+      }
+  }
+}
+
+void mainTask(int nfix, int n, int m) {
+	for (int i = 0; i <= n; i++) {
+	   sg.g[i] = 0;
+	   }
+	   total++;
+#pragma omp parallel num_threads(4)
+{
+#pragma omp single nowait
+{
+      int br = 0;
+      for (int i = 0; i <= n; i++) {
+      	sg.g[i] = 0;
+      	}
+      Gray_rec(sg.g, nfix + 1, n,
+         m, br);
+# pragma omp critical
+{total = total + ct; }
+      sg.g[nfix + 1] = m - 1;
+      GrayTask(sg, 1, nfix, n, m);
+}}}
+```
+
+The MPI implementation uses a **Master–Worker** strategy, where the master process dynamically distributes independent computational tasks to available worker processes. Each task corresponds to a fixed set of $nfix$ coordinates and generates the remaining codewords independently. Workers request new tasks upon completion, enabling efficient load balancing. The number of generated codewords can be collected from all processes through MPI collective communication.
 
 ### Experimental results
 
