@@ -179,7 +179,7 @@ Tables 2 and 3 present the execution times of the parallel implementations for $
 | OpenMP(task) | 23,43 | 12,20 |  9,863 |  6,774 | 
 | OpenMP(PF)   | 24,27 | 13,05 |  10,71 |  6,420 | 
 
-**Table 3**. Execution times for $m=11$ $n=10$ $nfix=2$}
+**Table 3**. Execution times for $m=11$ $n=10$ $nfix=2$
 
 ##### Related Publication
 
