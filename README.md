@@ -24,6 +24,10 @@ The main problem with development of a parallel implementation of algorithms is 
 
 ### Parallelization through generating subsets of the code
 
+The considered algorithm efficiently generates a subset of the modular $m$-ary Gray code $G(m,n)$ by producing only the codewords whose ranks belong to a specified interval $[A,B]$. It starts by applying an unranking procedure to obtain the codeword of rank $A$, and then sequentially generates the remaining $B−A$ codewords.
+
+To improve performance, the implementation avoids repeated modulo division operations that are normally required to determine the coordinate change between consecutive codewords. Instead, it uses an auxiliary helper array, initialized from the m-ary representation of the starting rank A, together with a simple if statement to emulate the modulo calculations. This optimization efficiently tracks the coordinate updates needed for generating subsequent codewords, resulting in a faster generation of Gray code subsets.
+
 ...
 
 ### Parallelization of recursive algorithm
