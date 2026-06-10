@@ -28,6 +28,41 @@ The considered algorithm efficiently generates a subset of the modular $m$-ary G
 
 To improve performance, the implementation avoids repeated modulo division operations that are normally required to determine the coordinate change between consecutive codewords. Instead, it uses an auxiliary helper array, initialized from the m-ary representation of the starting rank A, together with a simple if statement to emulate the modulo calculations. This optimization efficiently tracks the coordinate updates needed for generating subsequent codewords, resulting in a faster generation of Gray code subsets.
 
+```cpp
+const int Maxn = 30;
+int g[Maxn];
+void Gray_modular_unrank(int g[], int m,
+                          int n, int a);
+void Gray_subset(int m, int n,
+                   int A, int B){
+   int helper[Maxn];
+   for (int i = 0; i <= n; i++) {
+   	helper[i] = 0; }
+   Gray_modular_unrank(g, m, n, a);
+   int i = a, j=a, k, t = n,br = 0;
+   while (j > 0) {
+     helper[t] = j % m;
+     j = j / m; t--;}
+   t = 0;
+   do {
+   	 if (br == b - a)  return;
+   	 k = n;
+   	 i = i + 1;
+   	 j = i;
+   	 helper[k]++;
+   	 while (m == helper[k]) {
+   	   helper[k] = 0;
+   	   k = k - 1;
+   	   helper[k]++;}
+   	 if (k > 0) {
+   	   if (g[k] == (m - 1)){
+   	   	g[k] = 0;t = k;}
+   	   else {g[k] = (g[k] + 1); t = k;}
+   	 }
+   	 br++;
+   } while (k > 0);}
+```
+
 ...
 
 ### Parallelization of recursive algorithm
