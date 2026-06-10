@@ -31,10 +31,9 @@ To improve performance, the implementation avoids repeated modulo division opera
 ```cpp
 const int Maxn = 30;
 int g[Maxn];
-void Gray_modular_unrank(int g[], int m,
-                          int n, int a);
-void Gray_subset(int m, int n,
-                   int A, int B){
+void Gray_modular_unrank(int g[], int m, int n, int a);
+
+void Gray_subset(int m, int n, int A, int B){
    int helper[Maxn];
    for (int i = 0; i <= n; i++) {
    	helper[i] = 0; }
@@ -62,8 +61,25 @@ void Gray_subset(int m, int n,
    	 br++;
    } while (k > 0);}
 ```
+The considered parallel algorithm generates the complete $m$-ary Gray code with $A=0$ and $B=m^n-1$ by partitioning the range of codeword ranks among multiple threads or processes. Each thread independently generates a contiguous subset of codewords using the sequential generation algorithm. In an OpenMP implementation, the workload is distributed statically so that each thread computes approximately $m^n/P$ codewords, where $P$ is the number of threads. This approach enables efficient parallel generation of Gray code subsets and scalable execution on shared-memory systems.
 
-...
+```cpp
+void GrayOpenMP_subset(int m, int n) {
+   int ALLcw = 1;
+   for (int i = 1; i <= n; i++) {
+   	ALLcw = ALLcw * m;}
+   	long long int P = 4;
+   	long long int cwPerThread = ALLcw / P;
+   	omp_set_num_threads(P);
+#pragma omp parallel for
+    for(int i = 0; i<P; i++){
+    int A = i * cwPerThread,
+     B = ((i + 1) * words_per_process) - 1;
+    if (i == (P - 1)) B = total - 1;
+    Gray_subset(m, n, A, B);
+}}
+```
+To count the total number of generated codewords, a shared global counter can be updated inside an OpenMP $critical$ $section$. This ensures that only one thread modifies the counter at a time, preventing race conditions.
 
 ### Parallelization of recursive algorithm
 
